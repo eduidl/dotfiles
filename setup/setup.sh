@@ -1,0 +1,108 @@
+#!/bin/bash
+
+set -eo pipefail
+
+env LANGUAGE=C LC_MESSAGES=C xdg-user-dirs-gtk-update
+
+PATH=${PATH}:$HOME/.local/bin
+
+# PPA
+sudo apt install -y software-properties-common
+sudo add-apt-repository -y ppa:deadsnakes/ppa
+sudo add-apt-repository -y ppa:longsleep/golang-backports
+sudo add-apt-repository -y ppa:git-core/ppa
+sudo add-apt-repository -y ppa:fish-shell/release-3
+sudo add-apt-repository -y ppa:neovim-ppa/stable
+
+sudo apt update
+sudo apt install -y \
+    build-essential \
+    ca-certificates \
+    ccache \
+    curl \
+    fd-find \
+    fish \
+    fzf \
+    git \
+    gnupg \
+    golang-go \
+    libssl-dev \
+    lsb-release \
+    neovim \
+    ninja-build \
+    python3-dev \
+    python3-venv \
+    ripgrep \
+    vim \
+    tig \
+    wget
+
+ln -s "$(which fdfind)" ~/.local/bin/fd
+
+chsh -s /usr/bin/fish
+
+# fontのインストール
+git clone https://github.com/powerline/fonts.git --depth=1
+pushd fonts
+./install.sh
+popd
+rm -rf fonts
+
+# GitHub CLI
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" |
+    sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+sudo apt update
+sudo apt install -y gh
+
+# Docker
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" |
+    sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+
+sudo apt update
+sudo apt install -y \
+    docker-ce \
+    docker-ce-cli \
+    containerd.io \
+    docker-compose-plugin
+sudo gpasswd -a "${USER}" docker
+
+# Python
+sudo apt install -y
+curl https://bootstrap.pypa.io/get-pip.py | python3
+pip3 install pipx --user
+for lib in cmake clang-format pipenv; do
+    pipx install $lib
+done
+
+curl -sSL https://install.python-poetry.org | python3 -
+poetry config virtualenvs.in-project true
+
+# Rust
+# https://www.rust-lang.org/tools/install
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source ~/.cargo/env
+rustup toolchain add beta
+cargo install \
+    cargo-audit \
+    cargo-edit \
+    cargo-msrv \
+    cargo-outdated \
+    cargo-update \
+    cargo-watch \
+    du-dust \
+    eza \
+    git-delta
+
+# symlinks
+mkdir -p ~/.config/fish/
+ln -snf ~/dotfiles/fish/config.fish ~/.config/fish/config.fish
+ln -snf ~/dotfiles/git ~/.config/git
+ln -snf ~/dotfiles/nvim ~/.config/nvim
+
+fish ~/dotfiles/setup/setup.fish
