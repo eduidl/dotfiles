@@ -1,0 +1,72 @@
+---
+dotfiles_dir: "{{ playbook_dir | dirname }}"
+user_home: "{{ ansible_facts['user_dir'] }}"
+login_user: "{{ ansible_facts['user_id'] }}"
+mise_bin: "{{ user_home }}/.local/bin/mise"
+fish_bin: /usr/bin/fish
+source_code_pro_revision: a029626780dd4af32f15a3e708a5b00528c22f1d
+source_code_pro_font_dir: "{{ user_home }}/.local/share/fonts/SourceCodeProForPowerline"
+source_code_pro_files:
+  - name: Source Code Pro for Powerline.otf
+    sha256: f089e2eb25f4c652bd8fe41b3e24170b6dde8a43752749d6d229a6dc1ede408f
+  - name: Source Code Pro Bold for Powerline.otf
+    sha256: 23cf5e123f14a53036ea4e71aa609b8dce51df07eb3498229b668a8fa6a7c677
+  - name: Source Code Pro Powerline Italic.otf
+    sha256: 4c538ec9c323dc46adcd3216b28512642e278647b1069695ddd00c3b1fef0dcd
+  - name: Source Code Pro Powerline BoldItalic.otf
+    sha256: 4ac3c1eac3bdeb6f112b4ade768a5982c69cbc572a8e759d9ab1abf3e81d21a5
+  - name: LICENSE.txt
+    sha256: 9d97398e252a50bedebf67240d7946e50b092be06a1a1b1ba0d131ddc023010e
+install_rust_tools: false
+install_docker: true
+set_fish_login_shell: true
+update_ai_clis: false
+install_desktop_apps: true
+update_desktop_apps: false
+desktop_apps:
+  - name: Vivaldi
+    package: vivaldi-stable
+    download_page: https://vivaldi.com/download/
+    deb_pattern: 'https://downloads\.vivaldi\.com/stable/vivaldi-stable_[0-9][0-9A-Za-z.+~_-]*_amd64\.deb'
+  - name: Slack
+    package: slack-desktop
+    download_page: https://slack.com/downloads/instructions/linux?build=deb&ddl=1
+    deb_pattern: 'https://downloads\.slack-edge\.com/desktop-releases/linux/x64/[0-9.]+/slack-desktop-[0-9.]+-amd64\.deb'
+ai_cli_installers:
+  - name: codex
+    url: https://chatgpt.com/codex/install.sh
+    shell: /bin/sh
+  - name: claude
+    url: https://claude.ai/install.sh
+    shell: /bin/bash
+fish_plugins:
+  - jorgebucaran/fisher
+  - jethrokuan/fzf
+  - edc/bass
+  - oh-my-fish/theme-bobthefish
+# Older installs recorded these repository names before they redirected.
+fish_plugin_legacy_names:
+  jethrokuan/fzf: fisherman/fzf
+system_packages:
+  - build-essential
+  - ca-certificates
+  - ccache
+  - cmake
+  - curl
+  - fish
+  - fontconfig
+  - git
+  - gnupg
+  - libfontconfig1-dev
+  - libfreetype6-dev
+  - libssl-dev
+  - libxcb-xfixes0-dev
+  - libxkbcommon-dev
+  - ninja-build
+  - pkg-config
+  - python3-dev
+  - python3-venv
+  - tig
+  - vim
+  - wget
+  - xz-utils

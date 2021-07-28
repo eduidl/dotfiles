@@ -1,0 +1,8 @@
+---
+- name: Install system dependencies from Ubuntu
+  become: true
+  ansible.builtin.apt:
+    name: "{{ system_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600

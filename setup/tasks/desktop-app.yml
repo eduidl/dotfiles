@@ -1,0 +1,49 @@
+---
+- name: Require the architecture used by the configured deb downloads
+  ansible.builtin.assert:
+    that: ansible_facts['architecture'] == 'x86_64'
+    fail_msg: The configured Vivaldi and Slack deb downloads require amd64 Ubuntu.
+
+- name: Read the official download page for {{ desktop_app.name }}
+  ansible.builtin.uri:
+    url: "{{ desktop_app.download_page }}"
+    return_content: true
+  register: desktop_download_page
+
+- name: Find the official amd64 deb URL
+  ansible.builtin.set_fact:
+    desktop_deb_urls: "{{ desktop_download_page.content | regex_findall(desktop_app.deb_pattern) | unique | list }}"
+
+- name: Require an unambiguous official download link
+  ansible.builtin.assert:
+    that: desktop_deb_urls | length == 1
+    fail_msg: "Could not identify one deb download for {{ desktop_app.name }}. Check {{ desktop_app.download_page }} and its deb_pattern in setup/vars.yml."
+
+- name: Create the deb download cache
+  become: true
+  ansible.builtin.file:
+    path: /var/cache/dotfiles/debs
+    state: directory
+    mode: '0755'
+
+- name: Cache the official deb for {{ desktop_app.name }}
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ desktop_deb_urls[0] }}"
+    dest: "/var/cache/dotfiles/debs/{{ desktop_deb_urls[0] | basename }}"
+    mode: '0644'
+
+- name: Install {{ desktop_app.name }} and its dependencies
+  become: true
+  ansible.builtin.apt:
+    name: xz-utils
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install the downloaded {{ desktop_app.name }} package
+  become: true
+  ansible.builtin.apt:
+    deb: "/var/cache/dotfiles/debs/{{ desktop_deb_urls[0] | basename }}"
+    update_cache: true
+    cache_valid_time: 3600

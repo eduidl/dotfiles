@@ -1,0 +1,52 @@
+---
+- name: Enable optional global Rust tools
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/mise/optional/rust-tools.toml"
+    dest: "{{ user_home }}/.config/mise/conf.d/rust-tools.toml"
+    state: link
+  when: install_rust_tools | bool
+
+- name: Check for mise
+  ansible.builtin.stat:
+    path: "{{ mise_bin }}"
+  register: mise_executable
+
+- name: Download the mise installer
+  ansible.builtin.get_url:
+    url: https://mise.run
+    dest: "{{ user_home }}/.cache/dotfiles/install-mise.sh"
+    mode: '0644'
+  when: not mise_executable.stat.exists and not ansible_check_mode
+
+- name: Bootstrap mise for the login user
+  ansible.builtin.command:
+    argv: [sh, "{{ user_home }}/.cache/dotfiles/install-mise.sh"]
+    creates: "{{ mise_bin }}"
+  environment:
+    MISE_INSTALL_PATH: "{{ mise_bin }}"
+  when: not ansible_check_mode
+
+- name: Install tools declared in the global mise configuration
+  environment:
+    MISE_TRUSTED_CONFIG_PATHS: "{{ dotfiles_dir }}/mise"
+  when: not ansible_check_mode
+  block:
+    - name: Find missing mise tools
+      ansible.builtin.command:
+        argv: ["{{ mise_bin }}", ls, --missing, --json]
+        chdir: "{{ user_home }}"
+      register: mise_missing
+      changed_when: false
+
+    - name: Install missing mise tools
+      ansible.builtin.command:
+        argv: ["{{ mise_bin }}", install, --yes]
+        chdir: "{{ user_home }}"
+      when: (mise_missing.stdout | from_json | length) > 0
+      changed_when: true
+
+    - name: Generate stable mise shims for desktop applications
+      ansible.builtin.command:
+        argv: ["{{ mise_bin }}", reshim]
+        chdir: "{{ user_home }}"
+      changed_when: false

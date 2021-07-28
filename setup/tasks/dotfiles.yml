@@ -1,0 +1,56 @@
+---
+- name: Create user configuration directories
+  ansible.builtin.file:
+    path: "{{ user_home }}/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - .local/bin
+    - .cache/dotfiles
+    - .config/fish/functions
+    - .config/fish/completions
+
+- name: Link application configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/{{ item }}"
+    dest: "{{ user_home }}/.config/{{ item }}"
+    state: link
+  loop: [alacritty, git]
+
+- name: Inspect the mise configuration directory
+  ansible.builtin.stat:
+    path: "{{ user_home }}/.config/mise"
+    follow: false
+  register: mise_config_directory
+
+- name: Replace the old mise directory link with individual configuration links
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/mise"
+    state: absent
+  when:
+    - mise_config_directory.stat.islnk | default(false)
+    - mise_config_directory.stat.lnk_source == dotfiles_dir ~ '/mise'
+
+- name: Create the global mise configuration directories
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/mise/conf.d"
+    state: directory
+    mode: '0755'
+
+- name: Link the base mise configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/mise/config.toml"
+    dest: "{{ user_home }}/.config/mise/config.toml"
+    state: link
+  # In check mode the old directory link has not actually been removed yet.
+  when: >-
+    not ansible_check_mode or
+    not (mise_config_directory.stat.islnk | default(false) and
+         mise_config_directory.stat.lnk_source == dotfiles_dir ~ '/mise')
+
+- name: Link fish configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/fish/config.fish"
+    dest: "{{ user_home }}/.config/fish/config.fish"
+    state: link
+

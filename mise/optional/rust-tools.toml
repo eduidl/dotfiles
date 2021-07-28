@@ -1,0 +1,3 @@
+[tools]
+"cargo:cargo-release" = "latest"
+"cargo:cargo-watch" = "latest"

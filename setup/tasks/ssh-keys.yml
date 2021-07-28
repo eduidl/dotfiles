@@ -1,0 +1,13 @@
+---
+- name: Create the SSH directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.ssh"
+    state: directory
+    mode: '0700'
+
+- name: Generate each missing SSH key
+  ansible.builtin.include_tasks: ssh-key.yml
+  loop: [id_ed25519, id_ed25519_github]
+  loop_control:
+    loop_var: ssh_key_name
+

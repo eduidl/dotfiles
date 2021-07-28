@@ -1,0 +1,52 @@
+---
+- name: Check existing private and public keys
+  ansible.builtin.stat:
+    path: "{{ user_home }}/.ssh/{{ ssh_key_name }}{{ item }}"
+    follow: false
+  loop: ['', '.pub']
+  register: ssh_key_files
+
+- name: Refuse to overwrite an existing public key
+  ansible.builtin.assert:
+    that:
+      - ssh_key_files.results[0].stat.exists or ssh_key_files.results[0].stat.islnk | default(false) or not (ssh_key_files.results[1].stat.exists or ssh_key_files.results[1].stat.islnk | default(false))
+    fail_msg: "{{ ssh_key_name }}.pub exists without a private key; inspect it before continuing."
+
+- name: Generate {{ ssh_key_name }}
+  when:
+    - not (ssh_key_files.results[0].stat.exists or ssh_key_files.results[0].stat.islnk | default(false))
+    - not ansible_check_mode
+  block:
+    - name: Enter a passphrase for {{ ssh_key_name }}
+      ansible.builtin.pause:
+        prompt: "Passphrase for {{ ssh_key_name }} (empty for no passphrase)"
+        echo: false
+      register: ssh_key_passphrase
+      no_log: true
+
+    - name: Confirm the passphrase for {{ ssh_key_name }}
+      ansible.builtin.pause:
+        prompt: "Confirm passphrase for {{ ssh_key_name }}"
+        echo: false
+      register: ssh_key_confirmation
+      no_log: true
+
+    - name: Require matching passphrases
+      ansible.builtin.assert:
+        that:
+          - ssh_key_passphrase.user_input == ssh_key_confirmation.user_input
+        fail_msg: Passphrases must match.
+      no_log: true
+
+    - name: Create the key pair
+      ansible.builtin.command:
+        argv:
+          - ssh-keygen
+          - -t
+          - ed25519
+          - -f
+          - "{{ user_home }}/.ssh/{{ ssh_key_name }}"
+          - -N
+          - "{{ ssh_key_passphrase.user_input }}"
+        creates: "{{ user_home }}/.ssh/{{ ssh_key_name }}"
+      no_log: true

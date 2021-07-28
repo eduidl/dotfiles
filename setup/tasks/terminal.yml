@@ -1,0 +1,22 @@
+---
+- name: Inspect terminal emulator alternatives
+  ansible.builtin.command: update-alternatives --query x-terminal-emulator
+  register: terminal_alternatives
+  changed_when: false
+  failed_when: terminal_alternatives.rc not in [0, 2]
+  check_mode: false
+
+- name: Register the Alacritty mise shim as a terminal emulator
+  become: true
+  ansible.builtin.command:
+    argv:
+      - update-alternatives
+      - --install
+      - /usr/bin/x-terminal-emulator
+      - x-terminal-emulator
+      - "{{ user_home }}/.local/share/mise/shims/alacritty"
+      - '50'
+  when:
+    - not ansible_check_mode
+    - "('Alternative: ' ~ user_home ~ '/.local/share/mise/shims/alacritty') not in terminal_alternatives.stdout"
+  changed_when: true

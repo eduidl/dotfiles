@@ -1,0 +1,27 @@
+---
+- name: Create the user font directory
+  ansible.builtin.file:
+    path: "{{ source_code_pro_font_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Download Source Code Pro for Powerline fonts and license
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/powerline/fonts/{{ source_code_pro_revision }}/SourceCodePro/{{ item.name | urlencode }}"
+    dest: "{{ source_code_pro_font_dir }}/{{ item.name }}"
+    checksum: "sha256:{{ item.sha256 }}"
+    mode: '0644'
+    timeout: 30
+  loop: "{{ source_code_pro_files }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: source_code_pro_downloads
+  when: not ansible_check_mode
+
+- name: Refresh the user font cache after a font change
+  ansible.builtin.command:
+    argv: [fc-cache, -f, "{{ source_code_pro_font_dir }}"]
+  when:
+    - not ansible_check_mode
+    - source_code_pro_downloads.changed
+  changed_when: true

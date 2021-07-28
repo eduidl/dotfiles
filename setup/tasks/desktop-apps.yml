@@ -1,0 +1,17 @@
+---
+- name: Read installed packages
+  ansible.builtin.package_facts:
+    manager: apt
+
+- name: Install or update selected desktop applications
+  ansible.builtin.include_tasks:
+    file: desktop-app.yml
+    apply:
+      tags: [desktop-apps]
+  loop: "{{ desktop_apps }}"
+  loop_control:
+    loop_var: desktop_app
+    label: "{{ desktop_app.name }}"
+  when:
+    - desktop_app.package not in ansible_facts.packages or update_desktop_apps | bool
+    - not ansible_check_mode

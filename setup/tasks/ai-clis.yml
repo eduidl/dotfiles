@@ -1,0 +1,43 @@
+---
+- name: Create user directories for AI CLI installers
+  ansible.builtin.file:
+    path: "{{ user_home }}/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop: [.local/bin, .cache/dotfiles]
+
+- name: Check for native AI CLI installations
+  ansible.builtin.stat:
+    path: "{{ user_home }}/.local/bin/{{ item.name }}"
+    follow: true
+  loop: "{{ ai_cli_installers }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: ai_cli_binaries
+
+- name: Download official AI CLI shell installers
+  ansible.builtin.get_url:
+    url: "{{ item.item.url }}"
+    dest: "{{ user_home }}/.cache/dotfiles/install-{{ item.item.name }}.sh"
+    mode: '0644'
+  loop: "{{ ai_cli_binaries.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+  when:
+    - not ansible_check_mode
+    - not item.stat.exists or update_ai_clis | bool
+
+- name: Run official AI CLI shell installers as the login user
+  ansible.builtin.command:
+    argv:
+      - "{{ item.item.shell }}"
+      - "{{ user_home }}/.cache/dotfiles/install-{{ item.item.name }}.sh"
+  environment:
+    CODEX_NON_INTERACTIVE: 'true'
+  loop: "{{ ai_cli_binaries.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+  when:
+    - not ansible_check_mode
+    - not item.stat.exists or update_ai_clis | bool
+  changed_when: true

@@ -1,0 +1,60 @@
+---
+- name: Set up the local Ubuntu workstation
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  vars_files:
+    - vars.yml
+  environment:
+    PATH: "{{ lookup('env', 'HOME') }}/.local/bin:{{ lookup('env', 'HOME') }}/.cargo/bin:{{ lookup('env', 'PATH') }}"
+  pre_tasks:
+    - name: Require Ubuntu and a regular login user
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['distribution'] == 'Ubuntu'
+          - ansible_facts['user_uid'] != 0
+        fail_msg: Run as your login user on Ubuntu, without sudo (use --ask-become-pass).
+      tags: [always]
+    - name: Check for classic sudo to avoid sudo-rs prompt incompatibility
+      ansible.builtin.stat:
+        path: /usr/bin/sudo.ws
+      register: classic_sudo
+      tags: [always]
+    - name: Select a compatible sudo executable for Ansible
+      ansible.builtin.set_fact:
+        ansible_become_exe: "{{ '/usr/bin/sudo.ws' if classic_sudo.stat.executable | default(false) else '/usr/bin/sudo' }}"
+      when: ansible_become_exe is not defined
+      tags: [always]
+  tasks:
+    - name: Generate SSH keys on request
+      ansible.builtin.import_tasks: tasks/ssh-keys.yml
+      tags: [never, ssh-keys]
+    - name: Install OS packages
+      ansible.builtin.import_tasks: tasks/system.yml
+      tags: [system]
+    - name: Install Source Code Pro for Powerline
+      ansible.builtin.import_tasks: tasks/fonts.yml
+      tags: [fonts]
+    - name: Link configuration files
+      ansible.builtin.import_tasks: tasks/dotfiles.yml
+      tags: [dotfiles]
+    - name: Install mise and development tools
+      ansible.builtin.import_tasks: tasks/mise.yml
+      tags: [mise]
+    - name: Configure Docker Engine
+      ansible.builtin.import_tasks: tasks/docker.yml
+      when: install_docker | bool
+      tags: [docker]
+    - name: Install Codex and Claude Code using their shell installers
+      ansible.builtin.import_tasks: tasks/ai-clis.yml
+      tags: [ai-clis]
+    - name: Configure fish
+      ansible.builtin.import_tasks: tasks/fish.yml
+      tags: [fish]
+    - name: Install desktop applications from official deb downloads
+      ansible.builtin.import_tasks: tasks/desktop-apps.yml
+      when: install_desktop_apps | bool
+      tags: [desktop-apps]
+    - name: Register Alacritty as a terminal emulator
+      ansible.builtin.import_tasks: tasks/terminal.yml
+      tags: [terminal]

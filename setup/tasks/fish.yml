@@ -1,0 +1,55 @@
+---
+- name: Check for the Fisher function
+  ansible.builtin.stat:
+    path: "{{ user_home }}/.config/fish/functions/fisher.fish"
+  register: fisher_function
+
+- name: Download Fisher
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish
+    dest: "{{ user_home }}/.cache/dotfiles/fisher.fish"
+    mode: '0644'
+  when: not fisher_function.stat.exists and not ansible_check_mode
+
+- name: Select the installed Fisher function or its bootstrap source
+  ansible.builtin.set_fact:
+    fisher_source: "{{ user_home }}/{{ '.config/fish/functions/fisher.fish' if fisher_function.stat.exists else '.cache/dotfiles/fisher.fish' }}"
+
+- name: Install missing fish plugins
+  when: not ansible_check_mode
+  block:
+    - name: Check for the installed plugin manifest
+      ansible.builtin.stat:
+        path: "{{ user_home }}/.config/fish/fish_plugins"
+      register: fish_plugin_manifest
+
+    - name: Read the installed plugin manifest
+      ansible.builtin.slurp:
+        src: "{{ user_home }}/.config/fish/fish_plugins"
+      register: fish_plugin_file
+      when: fish_plugin_manifest.stat.exists
+
+    - name: List installed fish plugins
+      ansible.builtin.set_fact:
+        installed_fish_plugins: "{{ (fish_plugin_file.content | default('') | b64decode).splitlines() }}"
+
+    - name: Install missing fish plugins
+      ansible.builtin.command:
+        argv:
+          - "{{ fish_bin }}"
+          - -c
+          - 'source "$argv[1]"; fisher install $argv[2]'
+          - "{{ fisher_source }}"
+          - "{{ item }}"
+      loop: "{{ fish_plugins }}"
+      when:
+        - item not in installed_fish_plugins
+        - fish_plugin_legacy_names.get(item, item) not in installed_fish_plugins
+      changed_when: true
+
+- name: Set fish as the login shell
+  become: true
+  ansible.builtin.user:
+    name: "{{ login_user }}"
+    shell: "{{ fish_bin }}"
+  when: set_fish_login_shell | bool
