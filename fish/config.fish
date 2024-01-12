@@ -5,7 +5,7 @@ source $fish_scripts_dir/utility.fish
 
 for bin_dir in ~/.local ~/.cargo ~/go /usr/local/go ~/.deno
     if test -e $bin_dir/bin
-        set -xp PATH $bin_dir/bin
+        fish_add_path $bin_dir/bin
     end
 end
 
@@ -16,7 +16,7 @@ end
 if test -e /usr/local/cuda
     set -x CUDA_PATH /usr/local/cuda
     set -xp CPATH $CUDA_PATH/include
-    set -xp PATH $CUDA_PATH/bin
+    fish_add_path $CUDA_PATH/bin
     set -xp LIBRARY_PATH $CUDA_PATH/lib64
     set -xp LD_LIBRARY_PATH $CUDA_PATH/lib64
 end
