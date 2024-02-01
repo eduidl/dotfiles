@@ -37,7 +37,8 @@ sudo apt install -y \
     tig \
     wget
 
-ln -s "$(which fdfind)" ~/.local/bin/fd
+mkdir -p ~/.local/bin
+ln -sf "$(which fdfind)" ~/.local/bin/fd
 
 chsh -s /usr/bin/fish
 
