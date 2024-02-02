@@ -28,9 +28,5 @@
 	required = true
 [ghq]
 	root = ~/ghq
-[includeIf "gitdir:~/ghq/github.com/WHILL/"]
-	path = ~/.config/git/config.work
-[includeIf "gitdir:~/catkin_ws/"]
-	path = ~/.config/git/config.work
 [url "ssh://git@github.com/"]
 	insteadOf = https://github.com/

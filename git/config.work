@@ -1,4 +1,0 @@
-[user]
-	email = yuma.hiramatsu@whill.inc
-[url "ssh://git@github.com/WHILL"]
-	insteadOf = https://github.com/WHILL
