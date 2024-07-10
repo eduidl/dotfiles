@@ -100,10 +100,20 @@ cargo install \
     eza \
     git-delta
 
+# Terminal
+cargo install \
+    alacritty \
+    zellij
+
 # symlinks
 mkdir -p ~/.config/fish/
 ln -snf ~/dotfiles/fish/config.fish ~/.config/fish/config.fish
-ln -snf ~/dotfiles/git ~/.config/git
-ln -snf ~/dotfiles/nvim ~/.config/nvim
+
+for d in alacritty git nvim; do
+    ln -snf ~/dotfiles/$d ~/.config/$d
+done
+
+sudo update-alternatives --install \
+    /usr/bin/x-terminal-emulator x-terminal-emulator "$(which alacritty)" 50
 
 fish ~/dotfiles/setup/setup.fish

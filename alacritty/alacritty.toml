@@ -1,0 +1,10 @@
+[font.normal]
+family = "Source Code Pro for Powerline"
+style = "Regular"
+
+[shell]
+program = "/usr/bin/fish"
+args = ["-l", "-c", "zellij attach --index 0 --create"]
+
+[window]
+dimensions = { columns = 150, lines = 40 }
