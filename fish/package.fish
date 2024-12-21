@@ -14,9 +14,8 @@ function _update
     sudo apt update && sudo apt upgrade && sudo apt autoremove
 
     # Python
-    pip3 install pip -U
-    pip3 install pipx -U --user
-    pipx upgrade-all
+    rye self update
+    python3 -m pip install pip -U
 
     # fish
     fisher update
@@ -31,6 +30,16 @@ function _update
 
         cargo install-update -a
     end
+end
+
+function install_rust_dev
+    cargo install \
+        cargo-audit \
+        cargo-edit \
+        cargo-msrv \
+        cargo-outdated \
+        cargo-release \
+        cargo-watch
 end
 
 function install_aws_cli

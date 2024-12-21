@@ -76,12 +76,11 @@ sudo gpasswd -a "${USER}" docker
 # Python
 sudo apt install -y
 curl https://bootstrap.pypa.io/get-pip.py | python3
-pip3 install pipx --user
-for lib in cmake clang-format pipenv; do
-    pipx install $lib
+curl -LsSf https://astral.sh/uv/install.sh | sh
+for lib in black clang-format cmake pipenv poetry isort; do
+    uv tool install $lib
 done
 
-curl -sSL https://install.python-poetry.org | python3 -
 poetry config virtualenvs.in-project true
 
 # Rust
@@ -90,12 +89,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source ~/.cargo/env
 rustup toolchain add beta
 cargo install \
-    cargo-audit \
-    cargo-edit \
-    cargo-msrv \
-    cargo-outdated \
     cargo-update \
-    cargo-watch \
     du-dust \
     eza \
     git-delta

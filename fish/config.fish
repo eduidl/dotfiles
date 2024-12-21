@@ -3,7 +3,7 @@ set -xp LD_LIBRARY_PATH /usr/local/lib
 
 source $fish_scripts_dir/utility.fish
 
-for bin_dir in ~/.local ~/.cargo ~/go /usr/local/go ~/.deno
+for bin_dir in ~/.local ~/.cargo ~/.deno
     if test -e $bin_dir/bin
         fish_add_path $bin_dir/bin
     end
