@@ -38,7 +38,7 @@ if command_exist fd
     set -x FZF_CTRL_T_COMMAND $FZF_DEFAULT_COMMAND
 end
 
-for i in abbr completion package ros
+for i in abbr completion package
     source $fish_scripts_dir/$i.fish
 end
 
