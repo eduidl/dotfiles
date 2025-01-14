@@ -9,10 +9,6 @@ for bin_dir in ~/.local ~/.cargo ~/.deno
     end
 end
 
-if test -f ~/.rye/env
-    bass source ~/.rye/env
-end
-
 if test -e /usr/local/cuda
     set -x CUDA_PATH /usr/local/cuda
     set -xp CPATH $CUDA_PATH/include
