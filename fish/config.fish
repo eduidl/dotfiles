@@ -19,9 +19,10 @@ end
 
 # config of bobthefish
 # https://github.com/oh-my-fish/theme-bobthefish
-set -g theme_display_git_master_branch yes # master branchの表示
-set -g theme_display_date no # 日付の非表示
-set -g theme_newline_cursor yes # コマンド入力を行頭にする（改行しておく）
+set -U theme_display_git_master_branch yes # master branchの表示
+set -U theme_display_date no # 日付の非表示
+set -U theme_display_cmd_duration no # 実行時間の非表示
+set -U theme_newline_cursor yes # コマンド入力を行頭にする（改行しておく）
 
 set -x VIRTUAL_ENV_DISABLE_PROMPT 1 # disable the default virtualenv prompt
 set -x PIPENV_VENV_IN_PROJECT true
