@@ -14,7 +14,8 @@ function _update
     sudo apt update && sudo apt upgrade && sudo apt autoremove
 
     # Python
-    rye self update
+    uv self update
+    uv tool upgrade --all
     python3 -m pip install pip -U
 
     # fish
