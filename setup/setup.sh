@@ -11,7 +11,7 @@ sudo apt install -y software-properties-common
 sudo add-apt-repository -y ppa:deadsnakes/ppa
 sudo add-apt-repository -y ppa:longsleep/golang-backports
 sudo add-apt-repository -y ppa:git-core/ppa
-sudo add-apt-repository -y ppa:fish-shell/release-3
+sudo add-apt-repository -y ppa:fish-shell/release-4
 sudo add-apt-repository -y ppa:neovim-ppa/stable
 
 sudo apt update
@@ -95,6 +95,7 @@ cargo install \
     git-delta
 
 # Terminal
+sudo apt install cmake g++ pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev
 cargo install \
     alacritty \
     zellij
