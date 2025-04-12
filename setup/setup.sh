@@ -88,15 +88,17 @@ poetry config virtualenvs.in-project true
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source ~/.cargo/env
 rustup toolchain add beta
-cargo install \
+cargo install cargo-binstall
+cargo binstall \
     cargo-update \
     du-dust \
     eza \
-    git-delta
+    git-delta \
+    zoxide
 
 # Terminal
 sudo apt install cmake g++ pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev
-cargo install \
+cargo binstall \
     alacritty \
     zellij
 

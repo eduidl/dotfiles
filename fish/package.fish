@@ -34,7 +34,7 @@ function _update
 end
 
 function install_rust_dev
-    cargo install \
+    cargo binstall \
         cargo-audit \
         cargo-edit \
         cargo-msrv \
