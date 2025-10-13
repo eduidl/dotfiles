@@ -9,7 +9,6 @@ PATH=${PATH}:$HOME/.local/bin
 # PPA
 sudo apt install -y software-properties-common
 sudo add-apt-repository -y ppa:deadsnakes/ppa
-sudo add-apt-repository -y ppa:longsleep/golang-backports
 sudo add-apt-repository -y ppa:git-core/ppa
 sudo add-apt-repository -y ppa:fish-shell/release-4
 sudo add-apt-repository -y ppa:neovim-ppa/stable
@@ -25,7 +24,6 @@ sudo apt install -y \
     fzf \
     git \
     gnupg \
-    golang-go \
     libssl-dev \
     lsb-release \
     neovim \
