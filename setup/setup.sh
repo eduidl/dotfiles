@@ -75,7 +75,7 @@ sudo gpasswd -a "${USER}" docker
 sudo apt install -y
 curl https://bootstrap.pypa.io/get-pip.py | python3
 curl -LsSf https://astral.sh/uv/install.sh | sh
-for lib in black clang-format cmake pipenv poetry isort; do
+for lib in clang-format cmake pipenv poetry; do
     uv tool install $lib
 done
 

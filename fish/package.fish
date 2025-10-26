@@ -16,7 +16,6 @@ function _update
     # Python
     uv self update
     uv tool upgrade --all
-    python3 -m pip install pip -U
 
     # fish
     fisher update
@@ -34,7 +33,7 @@ function _update
 end
 
 function install_rust_dev
-    cargo binstall \
+    cargo binstall --force \
         cargo-audit \
         cargo-edit \
         cargo-msrv \
