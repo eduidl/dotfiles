@@ -30,3 +30,9 @@
 	root = ~/ghq
 [url "ssh://git@github.com/"]
 	insteadOf = https://github.com/
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
