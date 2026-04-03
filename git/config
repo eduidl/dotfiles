@@ -4,7 +4,7 @@
 [color]
 	ui = auto
 [core]
-	editor = nvim
+	editor = vim
 	pager = delta
 [delta]
 	navigate = true

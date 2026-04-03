@@ -11,7 +11,6 @@ sudo apt install -y software-properties-common
 sudo add-apt-repository -y ppa:deadsnakes/ppa
 sudo add-apt-repository -y ppa:git-core/ppa
 sudo add-apt-repository -y ppa:fish-shell/release-4
-sudo add-apt-repository -y ppa:neovim-ppa/stable
 
 sudo apt update
 sudo apt install -y \
@@ -26,7 +25,6 @@ sudo apt install -y \
     gnupg \
     libssl-dev \
     lsb-release \
-    neovim \
     ninja-build \
     python3-dev \
     python3-venv \
@@ -104,7 +102,7 @@ cargo binstall \
 mkdir -p ~/.config/fish/
 ln -snf ~/dotfiles/fish/config.fish ~/.config/fish/config.fish
 
-for d in alacritty git nvim; do
+for d in alacritty git; do
     ln -snf ~/dotfiles/$d ~/.config/$d
 done
 

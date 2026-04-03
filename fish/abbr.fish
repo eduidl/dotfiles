@@ -18,10 +18,7 @@ abbr gs git status
 abbr d docker
 abbr dc docker-compose
 
-if command_exist nvim
-    abbr vi nvim
-    abbr vim nvim
-else if command_exist vim
+if command_exist vim
     abbr vi vim
 end
 
