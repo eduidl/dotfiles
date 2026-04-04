@@ -1,0 +1,4 @@
+prefix_rule(pattern=["uv", "run", "ruff", "check"], decision="allow")
+prefix_rule(pattern=["uv", "run", "ruff", "format"], decision="allow")
+prefix_rule(pattern=["cargo", "fmt"], decision="allow")
+prefix_rule(pattern=["cargo", "check"], decision="allow")

@@ -106,6 +106,11 @@ for d in alacritty git; do
     ln -snf ~/dotfiles/$d ~/.config/$d
 done
 
+mkdir -p ~/.codex
+for d in config.toml prompts rules; do
+    ln -snf ~/dotfiles/codex/$d ~/.codex/$d
+done
+
 sudo update-alternatives --install \
     /usr/bin/x-terminal-emulator x-terminal-emulator "$(which alacritty)" 50
 
