@@ -8,7 +8,6 @@ PATH=${PATH}:$HOME/.local/bin
 
 # PPA
 sudo apt install -y software-properties-common
-sudo add-apt-repository -y ppa:deadsnakes/ppa
 sudo add-apt-repository -y ppa:git-core/ppa
 sudo add-apt-repository -y ppa:fish-shell/release-4
 
