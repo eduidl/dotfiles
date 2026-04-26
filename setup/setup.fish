@@ -8,8 +8,4 @@ fisher install \
     fisherman/z \
     dcors/fish-ghq \
     edc/bass \
-    jorgebucaran/nvm.fish \
     oh-my-fish/theme-bobthefish
-
-nvm install lts
-nvm use lts
