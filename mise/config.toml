@@ -1,4 +1,5 @@
 [tools]
+cargo-binstall = "latest"
 codex = "latest"
 delta = "latest"
 dust = "latest"
