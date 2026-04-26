@@ -9,7 +9,6 @@ PATH=${PATH}:$HOME/.local/bin
 # PPA
 sudo apt install -y software-properties-common
 sudo add-apt-repository -y ppa:git-core/ppa
-sudo add-apt-repository -y ppa:fish-shell/release-4
 
 sudo apt update
 sudo apt install -y \
@@ -17,9 +16,6 @@ sudo apt install -y \
     ca-certificates \
     ccache \
     curl \
-    fd-find \
-    fish \
-    fzf \
     git \
     gnupg \
     libssl-dev \
@@ -27,7 +23,6 @@ sudo apt install -y \
     ninja-build \
     python3-dev \
     python3-venv \
-    ripgrep \
     vim \
     tig \
     wget
@@ -44,14 +39,8 @@ pushd fonts
 popd
 rm -rf fonts
 
-# GitHub CLI
-curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-echo \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" |
-    sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
-sudo apt update
-sudo apt install -y gh
+# mise
+curl https://mise.run | sh
 
 # Docker
 sudo mkdir -p /etc/apt/keyrings
@@ -72,24 +61,16 @@ sudo gpasswd -a "${USER}" docker
 sudo apt install -y
 curl https://bootstrap.pypa.io/get-pip.py | python3
 curl -LsSf https://astral.sh/uv/install.sh | sh
-for lib in clang-format cmake pipenv poetry; do
+for lib in clang-format; do
     uv tool install $lib
 done
 
-poetry config virtualenvs.in-project true
-
 # Rust
 # https://www.rust-lang.org/tools/install
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source ~/.cargo/env
 rustup toolchain add beta
 cargo install cargo-binstall
 cargo binstall \
-    cargo-update \
-    du-dust \
-    eza \
-    git-delta \
-    zoxide
+    cargo-update
 
 # Terminal
 sudo apt install cmake g++ pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev
@@ -101,7 +82,7 @@ cargo binstall \
 mkdir -p ~/.config/fish/
 ln -snf ~/dotfiles/fish/config.fish ~/.config/fish/config.fish
 
-for d in alacritty git; do
+for d in alacritty git mise; do
     ln -snf ~/dotfiles/$d ~/.config/$d
 done
 

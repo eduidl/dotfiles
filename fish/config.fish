@@ -1,9 +1,11 @@
 set -g fish_scripts_dir ~/dotfiles/fish
 set -xp LD_LIBRARY_PATH /usr/local/lib
 
+~/.local/bin/mise activate fish | source
+
 source $fish_scripts_dir/utility.fish
 
-for bin_dir in ~/.local ~/.cargo ~/.deno
+for bin_dir in ~/.local ~/.cargo
     if test -e $bin_dir/bin
         fish_add_path $bin_dir/bin
     end
