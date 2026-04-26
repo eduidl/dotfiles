@@ -1,5 +1,4 @@
 [tools]
-clang-format = "latest"
 codex = "latest"
 delta = "latest"
 dust = "latest"
@@ -9,4 +8,6 @@ fzf = "latest"
 gh = "latest"
 ripgrep = "latest"
 rust = "latest"
+tokei = "latest"
+zellij = "latest"
 zoxide = "latest"
