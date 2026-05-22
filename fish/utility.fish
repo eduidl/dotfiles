@@ -17,3 +17,24 @@ function clean_tags
         del_tag $tag
     end
 end
+
+function init_repo
+    set -l visibility $argv[1]
+    if [ $visibility != private -a $visibility != public ]
+        echo "Invalid visibility: $visibility"
+        return 1
+    end
+
+    git init
+    git commit -m "Initial commit" --allow-empty
+    set -l repo_name (basename (pwd))
+    gh repo create eduidl/$repo_name --$visibility --source=. --remote=origin --push
+end
+
+function init_private_repo
+    init_repo private
+end
+
+function init_public_repo
+    init_repo public
+end
