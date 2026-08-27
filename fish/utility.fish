@@ -38,3 +38,9 @@ end
 function init_public_repo
     init_repo public
 end
+
+function kill-codex --description 'Kill all Codex processes'
+    killall -q -TERM codex 2>/dev/null
+    sleep 1
+    killall -q -KILL codex 2>/dev/null
+end
