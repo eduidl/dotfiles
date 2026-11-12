@@ -1,6 +1,5 @@
 [user]
 	name = Yuma Hiramatsu
-	email = yuma.hiramatsu@gmail.com
 [color]
 	ui = auto
 [core]
@@ -34,3 +33,6 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
+
+[include]
+	path = personal

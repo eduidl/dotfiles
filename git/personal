@@ -1,0 +1,4 @@
+[user]
+	email = yuma.hiramatsu@gmail.com
+[core]
+	sshCommand = ssh -F ~/.ssh/config -i ~/.ssh/id_ed25519_github -o IdentitiesOnly=yes
