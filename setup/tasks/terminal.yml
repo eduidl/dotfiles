@@ -20,3 +20,28 @@
     - not ansible_check_mode
     - "('Alternative: ' ~ user_home ~ '/.local/share/mise/shims/alacritty') not in terminal_alternatives.stdout"
   changed_when: true
+
+- name: Read GNOME default terminal settings
+  ansible.builtin.command:
+    argv: [gsettings, get, org.gnome.desktop.default-applications.terminal, "{{ item.key }}"]
+  loop:
+    - key: exec
+      value: "'{{ user_home }}/.local/share/mise/shims/alacritty'"
+    - key: exec-arg
+      value: "'-e'"
+  loop_control:
+    label: "{{ item.key }}"
+  register: gnome_terminal_settings
+  changed_when: false
+  check_mode: false
+
+- name: Use Alacritty as the GNOME default terminal for Ctrl+Alt+T
+  ansible.builtin.command:
+    argv: [gsettings, set, org.gnome.desktop.default-applications.terminal, "{{ item.item.key }}", "{{ item.item.value }}"]
+  loop: "{{ gnome_terminal_settings.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"
+  when:
+    - not ansible_check_mode
+    - item.stdout != item.item.value
+  changed_when: true

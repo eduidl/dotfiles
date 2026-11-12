@@ -55,6 +55,9 @@
       ansible.builtin.import_tasks: tasks/desktop-apps.yml
       when: install_desktop_apps | bool
       tags: [desktop-apps]
-    - name: Register Alacritty as a terminal emulator
+    - name: Configure Alacritty as the default terminal
       ansible.builtin.import_tasks: tasks/terminal.yml
       tags: [terminal]
+    - name: Install Meltype and configure English and Japanese input sources
+      ansible.builtin.import_tasks: tasks/meltype.yml
+      tags: [meltype]

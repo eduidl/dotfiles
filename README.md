@@ -23,6 +23,10 @@ ansible-playbook -i localhost, setup/playbook.yml --ask-become-pass
 ansible-playbook -i localhost, setup/playbook.yml --tags fonts
 # Codex CLIとClaude Code CLI
 ansible-playbook -i localhost, setup/playbook.yml --tags ai-clis
+# GNOMEの既定ターミナル（Ctrl+Alt+T）をAlacrittyに設定
+ansible-playbook -i localhost, setup/playbook.yml --tags terminal --ask-become-pass
+# Meltypeを導入し、入力ソースを英語（US）・日本語（Meltype）に設定
+ansible-playbook -i localhost, setup/playbook.yml --tags meltype --ask-become-pass
 # デスクトップアプリ（amd64）
 ansible-playbook -i localhost, setup/playbook.yml --tags desktop-apps --ask-become-pass
 # 導入済みのデスクトップアプリを更新
@@ -31,6 +35,9 @@ ansible-playbook -i localhost, setup/playbook.yml --tags desktop-apps --ask-beco
 ```
 
 フォントの変更は起動済みのAlacrittyを開き直すと反映されます。
+Meltypeは[公式APTリポジトリ](https://github.com/yksr-melt/Meltype/blob/main/docs/LINUX.md)から導入し、以後は通常のAPTで更新できます。
+入力ソースは英語（US）と日本語（Meltype）の2つに置き換えます。初回導入後はログアウトしてログインし直してください。
+Linux版Meltypeはプレビュー版です。
 AI CLIを更新するには`--tags ai-clis -e update_ai_clis=true`を指定し、初回の認証は起動後に行います。
 以前miseでCodexを導入していた場合は、`mise uninstall codex`で旧版を削除してください。
 Codexの設定共有は保留中です。Ansibleは`~/.codex`の設定やルールを配置・リンクしません。

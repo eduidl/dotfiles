@@ -1,0 +1,61 @@
+---
+- name: Create the APT keyring directory for Meltype
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Download the Meltype repository signing key
+  become: true
+  ansible.builtin.get_url:
+    url: https://yksr-melt.github.io/Meltype/apt/meltype-archive-key.asc
+    dest: /etc/apt/keyrings/meltype-archive-key.asc
+    mode: '0644'
+  register: meltype_signing_key
+
+- name: Configure the official Meltype APT repository
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/meltype.sources
+    content: |
+      Types: deb
+      URIs: https://yksr-melt.github.io/Meltype/apt
+      Suites: stable
+      Components: main
+      Architectures: amd64 arm64
+      Signed-By: /etc/apt/keyrings/meltype-archive-key.asc
+    mode: '0644'
+  register: meltype_repository
+
+- name: Install Meltype and IBus support
+  become: true
+  ansible.builtin.apt:
+    name:
+      - meltype
+      - ibus
+      - gir1.2-ibus-1.0
+    state: present
+    update_cache: true
+    cache_valid_time: "{{ 0 if meltype_repository.changed or meltype_signing_key.changed else 3600 }}"
+  when: not ansible_check_mode or not (meltype_repository.changed or meltype_signing_key.changed)
+
+- name: Read GNOME input sources
+  ansible.builtin.command:
+    argv: [gsettings, get, org.gnome.desktop.input-sources, sources]
+  register: gnome_input_sources
+  changed_when: false
+  check_mode: false
+
+- name: Use English US and Japanese Meltype as GNOME input sources
+  ansible.builtin.command:
+    argv:
+      - gsettings
+      - set
+      - org.gnome.desktop.input-sources
+      - sources
+      - "[('xkb', 'us'), ('ibus', 'meltype')]"
+  when:
+    - not ansible_check_mode
+    - gnome_input_sources.stdout != "[('xkb', 'us'), ('ibus', 'meltype')]"
+  changed_when: true
